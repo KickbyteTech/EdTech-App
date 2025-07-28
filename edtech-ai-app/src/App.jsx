@@ -8,7 +8,6 @@ import Timer from './pages/Timer';
 import Summarizer from './pages/Summarizer';
 import Flashcards from './pages/Flashcards';
 import Settings from './pages/Settings';  
-import Summarizer from './pages/ai-summarizer';
 function App() {
   return (
     <Router>
