@@ -1,15 +1,15 @@
 import react from 'react';
 import { useState } from 'react';
-import './ai-summarizer.css';
+import './roadmap.css';
 import Sidebar from '../components/Sidebar';
 
-const Summarizer = () => {
+const Roadmap = () => {
   return (
-    <div className="summarizer">
+    <div className="roadmap">
       <Sidebar />
-      <h1>AI Summarizer</h1>
+      <h1>Roadmap</h1>
     </div>
   );
 };
 
-export default Summarizer;
+export default Roadmap;

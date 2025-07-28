@@ -1,15 +1,15 @@
 import react from 'react';
 import { useState } from 'react';
-import './ai-summarizer.css';
+import './notes.css';
 import Sidebar from '../components/Sidebar';
 
-const Summarizer = () => {
+const Notes = () => {
   return (
-    <div className="summarizer">
+    <div className="notes">
       <Sidebar />
-      <h1>AI Summarizer</h1>
+      <h1>Notes</h1>
     </div>
   );
 };
 
-export default Summarizer;
+export default Notes;

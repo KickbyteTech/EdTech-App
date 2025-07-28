@@ -1,15 +1,15 @@
 import react from 'react';
 import { useState } from 'react';
-import './ai-summarizer.css';
+import './timer.css';
 import Sidebar from '../components/Sidebar';
 
-const Summarizer = () => {
+const Timer = () => {
   return (
-    <div className="summarizer">
+    <div className="timer">
       <Sidebar />
-      <h1>AI Summarizer</h1>
+      <h1>AI Timer</h1>
     </div>
   );
 };
 
-export default Summarizer;
+export default Timer;
