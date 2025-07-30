@@ -1,6 +1,5 @@
 import react from 'react';
 import { useState } from 'react';
-import './notes.css';
 import Sidebar from '../components/Sidebar';
 
 const Notes = () => {

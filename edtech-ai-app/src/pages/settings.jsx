@@ -1,6 +1,5 @@
 import react from 'react';
 import { useState } from 'react';
-import './settings.css';
 import Sidebar from '../components/Sidebar';
 
 const Settings = () => {

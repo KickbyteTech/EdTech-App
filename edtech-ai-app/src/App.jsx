@@ -6,7 +6,6 @@ import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
 import Timer from './pages/Timer';
 import Summarizer from './pages/Summarizer';
-import Flashcards from './pages/Flashcards';
 import Settings from './pages/Settings';  
 function App() {
   return (
@@ -19,7 +18,6 @@ function App() {
             <Route path="/dashboard" elements={<Dashboard />} />
             <Route path="/timer" elements={<Timer />} />
             <Route path="/summarizer" elements={<Summarizer />} />
-            <Route path="/flashcards" elements={<Flashcards />} />
             <Route path="/settings" elements={<Settings />} />
         
           </Routes>
