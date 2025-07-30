@@ -14,11 +14,11 @@ function App() {
         <Sidebar />
         <main className="main">
           <Routes>
-            <Route path="/" elements={<Navigate to="/dashboard" />} />
-            <Route path="/dashboard" elements={<Dashboard />} />
-            <Route path="/timer" elements={<Timer />} />
-            <Route path="/summarizer" elements={<Summarizer />} />
-            <Route path="/settings" elements={<Settings />} />
+            <Route path="/" element={<Navigate to="/dashboard" />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/timer" element={<Timer />} />
+            <Route path="/summarizer" element={<Summarizer />} />
+            <Route path="/settings" element={<Settings />} />
         
           </Routes>
         </main>
