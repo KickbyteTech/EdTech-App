@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar/Sidebar';
+import ParticleBackground from './components/ParticleBackground'; 
 
 // Pages
 import Dashboard from './pages/Dashboard';
@@ -14,6 +15,7 @@ function App() {
   return (
     <Router>
       <div className="home-container">
+        <ParticleBackground/>
         <Sidebar />
         <main className="main">
           <Routes>
