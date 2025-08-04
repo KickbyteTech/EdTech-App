@@ -3,14 +3,14 @@ import { useState } from 'react';
 import Sidebar from '../components/Sidebar/Sidebar';
 import ParticleBackground from '../components/ParticleBackground';
 
-const Settings = () => {
+const Progress = () => {
   return (
-    <div className="settings">
-      <ParticleBackground />
+    <div className="progress">
+      <ParticleBackground/>
       <Sidebar />
-      <h1>Settings</h1>
+      <h1>Progress</h1>
     </div>
   );
 };
 
-export default Settings;
+export default Progress;
