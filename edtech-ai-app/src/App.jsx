@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Sidebar from "./components/sidebar";
-import ParticleBackground from './components/ParticleBackground';
+import Sidebar from './components/Sidebar';
 
 // Pages
 import Dashboard from './pages/Dashboard';
