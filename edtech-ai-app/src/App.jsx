@@ -7,7 +7,9 @@ import Dashboard from './pages/Dashboard';
 import Timer from './pages/Timer';
 import Summarizer from './pages/Summarizer';
 import Flashcards from './pages/Flashcards';
-import Settings from './pages/Settings';  
+import Settings from './pages/Settings';
+import Notes from './pages/notes';
+
 function App() {
   return (
     <Router>
@@ -21,6 +23,7 @@ function App() {
             <Route path="/summarizer" elements={<Summarizer />} />
             <Route path="/flashcards" elements={<Flashcards />} />
             <Route path="/settings" elements={<Settings />} />
+            <Route path="/notes" elements={<Notes />} />
         
           </Routes>
         </main>
