@@ -1,7 +1,7 @@
 /* Home Page Styles */
 
 .home-container {
-    display: none;
+    display: block;
     min-height: 100vh;
 }
 
@@ -67,10 +67,6 @@
     margin-left: 280px;
     padding: 40px;
     min-height: 100vh;
-}
-
-.feature-section {
-    display: none;
 }
 
 .feature-section.active {

@@ -1,13 +1,9 @@
 import react from 'react';
 import { useState } from 'react';
-import Sidebar from '../components/Sidebar/Sidebar';
-import ParticleBackground from '../components/ParticleBackground';
 
 const Settings = () => {
   return (
     <div className="settings">
-      <ParticleBackground />
-      <Sidebar />
       <h1>Settings</h1>
     </div>
   );

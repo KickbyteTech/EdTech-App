@@ -4,6 +4,25 @@
   padding: 2rem;
   text-align: center;
 }
+/* In your App.css or index.css file */
+
+/* This container will hold the sidebar and the main content area */
+.home-container {
+  display: flex; /* This makes the children (Sidebar and main) sit side-by-side */
+  position: relative; /* Important for positioning child elements */
+}
+
+/* 
+  This is the KEY to the solution.
+  We need to push the main content to the right so it's not hidden UNDER the sidebar.
+*/
+.main {
+  flex-grow: 1; /* This tells the main content area to take up all remaining space */
+  padding-left: 250px; /* Or whatever the width of your sidebar is */
+  padding-top: 2rem;
+  padding-right: 2rem;
+  width: 100%;
+}
 
 .logo {
   height: 6em;
