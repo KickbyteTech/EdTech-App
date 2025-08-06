@@ -15,18 +15,17 @@ function App() {
   return (
     <Router>
       <div className="home-container">
-        <ParticleBackground/>
+        <ParticleBackground />
         <Sidebar />
         <main className="main">
           <Routes>
-            <Route path="/" elements={<Navigate to="/dashboard" />} />
-            <Route path="/dashboard" elements={<Dashboard />} />
-            <Route path="/timer" elements={<Timer />} />
-            <Route path="/summarizer" elements={<Summarizer />} />
-            <Route path="/flashcards" elements={<Flashcards />} />
-            <Route path="/settings" elements={<Settings />} />
-            <Route path="/notes" elements={<Notes />} />
-        
+            <Route path="/" element={<Navigate to="/dashboard" />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/timer" element={<Timer />} />
+            <Route path="/summarizer" element={<Summarizer />} />
+            <Route path="/flashcards" element={<Flashcards />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/notes" element={<Notes />} />
           </Routes>
         </main>
       </div>
