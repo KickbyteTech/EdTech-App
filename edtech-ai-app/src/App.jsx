@@ -4,7 +4,7 @@ import Sidebar from './components/Sidebar/Sidebar';
 import ParticleBackground from './components/ParticleBackground'; 
 
 // Pages
-import Dashboard from './pages/Dashboard';
+import Dashboard from './pages/dashboard/dashboard';
 import Timer from './pages/Timer';
 import Summarizer from './pages/Summarizer';
 import Flashcards from './pages/Flashcards';
