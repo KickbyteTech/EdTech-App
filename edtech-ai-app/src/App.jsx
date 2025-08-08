@@ -7,7 +7,7 @@ import ParticleBackground from './components/ParticleBackground';
 import Dashboard from './pages/dashboard/dashboard';
 import Timer from './pages/timer/timer';
 import Summarizer from './pages/Summarizer';
-import Flashcards from './pages/Flashcards';
+
 import Settings from './pages/Settings';
 import Notes from './pages/notes';
 
@@ -23,7 +23,6 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/timer" element={<Timer />} />
             <Route path="/summarizer" element={<Summarizer />} />
-            <Route path="/flashcards" element={<Flashcards />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/notes" element={<Notes />} />
           </Routes>
