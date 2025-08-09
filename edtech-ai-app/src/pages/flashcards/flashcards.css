@@ -19,10 +19,21 @@
         justify-content: center;
         gap: 20px;
     }
+    input[type="email"], input[type="password"], input[type="text"] {
+    width: 100%;
+    padding: 15px 20px;
+    border: 2px solid rgba(64, 224, 255, 0.3);
+    border-radius: 12px;
+    background: rgba(15, 15, 35, 0.6);
+    color: #ffffff;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
 
 /* SUMMARY CSS */
 
-    /* textarea {
+     textarea {
         width: 100%;
         padding: 15px;
         border: 2px solid rgba(64, 224, 255, 0.3);
@@ -33,7 +44,7 @@
         min-height: 120px;
         margin-bottom: 10px;
     }
-    .summary-output {
+    /* .summary-output {
         background: #0f0f23;
         border-radius: 8px;
         padding: 12px;
@@ -41,4 +52,4 @@
         color: #40e0ff;
         min-height: 40px;
         white-space: pre-wrap;
-    } */
+    }  */
