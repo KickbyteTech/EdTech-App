@@ -10,6 +10,7 @@ import Summarizer from './pages/Summarizer';
 import Flashcards from './pages/flashcards/flashcards';
 import Settings from './pages/Settings';
 import Notes from './pages/notes';
+import Roadmap from './pages/ai-coursemaker/roadmap';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
             <Route path="/summarizer" element={<Summarizer />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/notes" element={<Notes />} />
+            <Route path="/roadmap" element={<Roadmap />} />
           </Routes>
         </main>
       </div>

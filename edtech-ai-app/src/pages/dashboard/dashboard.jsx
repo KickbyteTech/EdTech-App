@@ -12,7 +12,7 @@ const Dashboard = () => {
   return (
     <div className="feature-section" id="dashboardSection">
       <div className="welcome-section">
-        <h1>Welcome back, Karan! 🎓</h1>
+        <h1>Welcome back, Buddy 🎓</h1>
         <p>Ready to crush your studies today? Let's make it happen!</p>
       </div>
       <div className="quick-stats">
