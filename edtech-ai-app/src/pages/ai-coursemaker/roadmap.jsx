@@ -6,7 +6,7 @@ const Roadmap = () => {
     <div className="roadmap">
       <h1>AI Roadmap Maker</h1>
       <br></br>
-      <p>Coming Soon!</p>
+      <h2>Coming Soon!</h2>
     </div>
   );
 };
