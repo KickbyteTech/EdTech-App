@@ -5,6 +5,7 @@ const Roadmap = () => {
   return (
     <div className="roadmap">
       <h1>AI Roadmap Maker</h1>
+      <br></br>
       <p>Coming Soon!</p>
     </div>
   );
