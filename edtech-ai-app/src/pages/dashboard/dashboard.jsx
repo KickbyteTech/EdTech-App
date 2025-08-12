@@ -53,7 +53,7 @@ const Dashboard = () => {
               <button className="card-action">Review Cards</button>
           </div>
           <div className="feature-card" onClick={navigateTo('roadmap')}>
-              <div className="card-icon">🃏</div>
+              <div className="card-icon">🎯</div>
               <h3>AI Roadmap maker</h3>
               <p>AI generates personalized roadmap for your subject and duration.</p>
               <button className="card-action">Create Roadmap</button>
