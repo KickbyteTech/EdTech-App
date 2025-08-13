@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import './roadmap.css'; // Create this for styling
 
-const API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 const genAI = new GoogleGenerativeAI(API_KEY);
 const model = genAI.getGenerativeModel({ model: "models/gemini-2.5-pro" });
 
