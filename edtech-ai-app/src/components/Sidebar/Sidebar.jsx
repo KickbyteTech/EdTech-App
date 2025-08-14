@@ -6,6 +6,7 @@ const Sidebar = () => {
   const navItems = [
     { label: '📊 Dashboard', path: '/dashboard' },
     { label: '🎯 AI Roadmap Maker', path: '/roadmap' },
+    { label: '🃏 Flashcards', path: '/flashcards' },
     { label: '⏰ Focus Timer', path: '/timer' },
     { label: '🤖 AI Summarizer', path: '/summarizer' },
     { label: '📝 Smart Notes', path: '/notes' },

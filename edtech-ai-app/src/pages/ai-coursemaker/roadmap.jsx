@@ -99,7 +99,7 @@ Return only JSON structured as:
           placeholder="e.g., 6 Weeks"
           required
         />
-        <button type="submit" disabled={isLoading}>
+        <button className='card-action' type="submit" disabled={isLoading}>
           {isLoading ? 'Generating...' : 'Create Roadmap'}
         </button>
       </form>
