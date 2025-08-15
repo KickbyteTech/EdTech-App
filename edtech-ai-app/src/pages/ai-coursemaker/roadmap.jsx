@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./roadmap.css"; // ✅ Import CSS
+import "./roadmap.css"; // ✅ Import updated CSS
 
 export default function RoadmapGenerator() {
   const [course, setCourse] = useState("");
@@ -7,6 +7,7 @@ export default function RoadmapGenerator() {
   const [roadmap, setRoadmap] = useState({});
   const [loading, setLoading] = useState(false);
 
+  // IMPORTANT: Make sure you have VITE_GEMINI_API_KEY in your .env.local file
   const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
   const generateRoadmap = async () => {
@@ -29,12 +30,20 @@ export default function RoadmapGenerator() {
           }),
         }
       );
+      
+      if (!res.ok) {
+        throw new Error(`API request failed with status ${res.status}`);
+      }
 
       const data = await res.json();
       const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
 
+      if (!text) {
+        throw new Error("No content received from API.");
+      }
+
       // Parse weeks into an object { "Week 1": [task1, task2], "Week 2": [...] }
-      const weekBlocks = text.split(/(?=Week\s+\d+)/i);
+      const weekBlocks = text.split(/(?=Week\s+\d+:)/i);
       const structuredRoadmap = {};
 
       weekBlocks.forEach((block) => {
@@ -57,7 +66,7 @@ export default function RoadmapGenerator() {
       setRoadmap(structuredRoadmap);
     } catch (err) {
       console.error(err);
-      alert("Error generating roadmap");
+      alert("Error generating roadmap. Check the console for details.");
     } finally {
       setLoading(false);
     }
@@ -89,8 +98,8 @@ export default function RoadmapGenerator() {
         onChange={(e) => setDuration(e.target.value)}
         className="roadmap-input"
       />
-      <button onClick={generateRoadmap} className="roadmap-button">
-        {loading ? "Generating..." : "Generate"}
+      <button onClick={generateRoadmap} disabled={loading} className="roadmap-button">
+        {loading ? "Generating..." : "Generate Roadmap"}
       </button>
 
       <div className="roadmap-board">
