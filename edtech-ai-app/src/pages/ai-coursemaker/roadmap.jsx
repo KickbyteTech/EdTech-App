@@ -1,110 +1,119 @@
 import React, { useState } from "react";
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import "./roadmap.css";
+import "./roadmap.css"; // ✅ Import CSS
 
-// Store API key in a Vite-compatible env variable
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-const genAI = new GoogleGenerativeAI(API_KEY);
-
-export default function Roadmap() {
-  const [subject, setSubject] = useState("");
+export default function RoadmapGenerator() {
+  const [course, setCourse] = useState("");
   const [duration, setDuration] = useState("");
+  const [roadmap, setRoadmap] = useState({});
   const [loading, setLoading] = useState(false);
-  const [roadmap, setRoadmap] = useState(null);
-  const [error, setError] = useState("");
 
-  const handleGenerate = async () => {
-    if (!subject || !duration) {
-      setError("Please enter both subject and duration.");
-      return;
-    }
-    setError("");
+  const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+
+  const generateRoadmap = async () => {
+    if (!course || !duration) return alert("Please enter both fields");
+
     setLoading(true);
-    setRoadmap(null);
+    setRoadmap({});
 
     try {
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const prompt = `Create a detailed study roadmap for learning ${course} in ${duration}.
+      Output format: "Week X: Title" headings followed by bullet points of tasks for that week.`;
 
-      const prompt = `
-        Create a detailed study roadmap for learning "${subject}" in "${duration}".
-        Format your response strictly as a JSON object like this:
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`,
         {
-          "weeks": [
-            {
-              "week": 1,
-              "tasks": ["task 1", "task 2"]
-            },
-            ...
-          ]
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+          }),
         }
-        Do NOT include any extra text outside the JSON.
-      `;
+      );
 
-      const result = await model.generateContent(prompt);
-      let text = result.response.text();
+      const data = await res.json();
+      const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
 
-      // Extract JSON safely
-      const jsonMatch = text.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
-      if (!jsonMatch) {
-        throw new Error("No valid JSON found in AI response.");
-      }
+      // Parse weeks into an object { "Week 1": [task1, task2], "Week 2": [...] }
+      const weekBlocks = text.split(/(?=Week\s+\d+)/i);
+      const structuredRoadmap = {};
 
-      let data;
-      try {
-        data = JSON.parse(jsonMatch[0]);
-      } catch (err) {
-        throw new Error("Invalid JSON format.");
-      }
+      weekBlocks.forEach((block) => {
+        const lines = block.split("\n").filter((line) => line.trim());
+        if (lines.length === 0) return;
 
-      setRoadmap(data);
+        const weekTitle = lines[0].replace(/\*\*/g, "").trim();
+        const tasks = lines
+          .slice(1)
+          .map((line) => ({
+            text: line.replace(/^[-*]\s*/, "").replace(/\*\*/g, "").trim(),
+            done: false,
+          }));
+
+        if (weekTitle && tasks.length) {
+          structuredRoadmap[weekTitle] = tasks;
+        }
+      });
+
+      setRoadmap(structuredRoadmap);
     } catch (err) {
       console.error(err);
-      setError(err.message || "Failed to generate roadmap.");
+      alert("Error generating roadmap");
     } finally {
       setLoading(false);
     }
   };
 
+  const toggleCheckbox = (week, index) => {
+    setRoadmap((prev) => ({
+      ...prev,
+      [week]: prev[week].map((task, i) =>
+        i === index ? { ...task, done: !task.done } : task
+      ),
+    }));
+  };
+
   return (
     <div className="roadmap-container">
-      <h2>AI Study Roadmap Generator</h2>
+      <h2 className="roadmap-title">AI Roadmap Generator</h2>
+      <input
+        type="text"
+        placeholder="e.g. Python"
+        value={course}
+        onChange={(e) => setCourse(e.target.value)}
+        className="roadmap-input"
+      />
+      <input
+        type="text"
+        placeholder="e.g. 1 month"
+        value={duration}
+        onChange={(e) => setDuration(e.target.value)}
+        className="roadmap-input"
+      />
+      <button onClick={generateRoadmap} className="roadmap-button">
+        {loading ? "Generating..." : "Generate"}
+      </button>
 
-      <div className="input-section">
-        <input
-          type="text"
-          placeholder="Enter subject (e.g. Python)"
-          value={subject}
-          onChange={(e) => setSubject(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Enter duration (e.g. 1 month)"
-          value={duration}
-          onChange={(e) => setDuration(e.target.value)}
-        />
-        <button className="card-action" onClick={handleGenerate} disabled={loading}>
-          {loading ? "Generating..." : "Generate Roadmap"}
-        </button>
+      <div className="roadmap-board">
+        {Object.entries(roadmap).map(([week, tasks]) => (
+          <div key={week} className="week-column">
+            <h3>{week}</h3>
+            {tasks.map((task, index) => (
+              <label
+                key={index}
+                className={`roadmap-task ${task.done ? "done" : ""}`}
+              >
+                <input
+                  type="checkbox"
+                  checked={task.done}
+                  onChange={() => toggleCheckbox(week, index)}
+                  className="roadmap-checkbox"
+                />
+                {task.text}
+              </label>
+            ))}
+          </div>
+        ))}
       </div>
-
-      {error && <p className="error">{error}</p>}
-
-      {roadmap && roadmap.weeks && (
-        <div className="roadmap-output">
-          {roadmap.weeks.map((week, index) => (
-            <div key={index} className="week-section">
-              <h3>Week {week.week}</h3>
-              <ul>
-                {week.tasks.map((task, idx) => (
-                  <li key={idx}>
-                    <input type="checkbox" /> {task}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 }
