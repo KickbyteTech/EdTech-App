@@ -1,184 +1,309 @@
-/* --- THEME & COLOR VARIABLES (DARK MODE BY DEFAULT) --- */
-:root {
-  --bg-color: #111827;
-  --text-color: #e5e7eb;
-  --text-muted-color: #6b7280;
-  --title-color: #ffffff;
-  --input-bg: #1f2937;
-  --input-border: #374151;
-  --button-bg: #4f46e5;
-  --button-hover-bg: #4338ca;
-  --task-bg: #1f2937;
-  --task-border: #374151;
-  --task-hover-bg: #374151;
-
-  /* Pastel colors for columns */
-  --week-bg-1: #2a3d45;
-  --week-border-1: #3b5561;
-  --week-bg-2: #4f3b4a;
-  --week-border-2: #6d5367;
-  --week-bg-3: #2e4034;
-  --week-border-3: #415a49;
-  --week-bg-4: #504231;
-  --week-border-4: #6e5c45;
-}
-
-/* --- GENERAL CONTAINER & TYPOGRAPHY --- */
+/* General Styling */
 .roadmap-container {
-  max-width: 1200px;
-  margin: auto;
-  padding: 24px;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  color: var(--text-color);
-  background-color: var(--bg-color);
+  font-family: 'Inter', sans-serif;
+  background-color: #0d1117;
+  color: #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  padding: 40px 20px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #161b22;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  border: 1px solid #30363d;
 }
 
+/* Header */
 .roadmap-title {
-  font-size: 2.25rem;
-  font-weight: bold;
-  margin-bottom: 24px;
+  font-size: 2.5rem;
+  color: #ffffff;
   text-align: center;
-  color: var(--title-color);
+  margin-bottom: 10px;
 }
 
-/* --- INPUTS & BUTTON --- */
+.roadmap-subtitle {
+  text-align: center;
+  color: #8b949e;
+  margin-bottom: 30px;
+  font-size: 1.1rem;
+}
+
+/* Input Fields & Buttons */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+@media (min-width: 600px) {
+  .input-group {
+    flex-direction: row;
+  }
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 30px;
+  width: 100%;
+}
+
+@media (min-width: 600px) {
+  .button-group {
+    flex-direction: row;
+  }
+}
+
 .roadmap-input {
   width: 100%;
-  padding: 12px;
-  margin-bottom: 12px;
-  border-radius: 8px;
-  border: 1px solid var(--input-border);
-  background-color: var(--input-bg);
-  color: var(--text-color);
+  padding: 15px;
   font-size: 1rem;
-  box-sizing: border-box; /* Ensures padding doesn't affect width */
+  background-color: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  color: #e0e0e0;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  box-sizing: border-box;
 }
+
+.roadmap-input:focus {
+  border-color: #58a6ff;
+  box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2);
+}
+
 .roadmap-input::placeholder {
-  color: var(--text-muted-color);
+  color: #8b949e;
 }
 
 .roadmap-button {
   width: 100%;
-  padding: 12px;
-  background-color: var(--button-bg);
-  color: white;
+  padding: 15px;
+  font-size: 1.1rem;
+  font-weight: 700;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 1rem;
-  font-weight: 500;
-  margin-bottom: 32px;
-  transition: background-color 0.2s;
-}
-.roadmap-button:hover {
-  background-color: var(--button-hover-bg);
-}
-.roadmap-button:disabled {
-  background-color: #374151;
-  cursor: not-allowed;
-}
-
-/* --- KANBAN BOARD (GRID LAYOUT) --- */
-.roadmap-board {
-  display: grid;
-  /* Creates a responsive grid with columns that are at least 280px wide. 
-     It will fit as many columns as possible (up to 4 on large screens) and wrap them. */
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
-}
-
-/* --- WEEK COLUMN & PASTEL COLOR-CODING --- */
-.week-column {
-  border-radius: 10px;
-  padding: 15px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s;
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.week-column h3 {
-  font-size: 1.2rem;
-  margin: 0 0 10px 0;
-  padding-bottom: 8px;
-  font-weight: 600;
-  color: var(--title-color);
-}
-
-/* Assigning a unique background and border color to each column */
-.week-column:nth-child(4n + 1) {
-  background: var(--week-bg-1);
-}
-.week-column:nth-child(4n + 1) h3 {
-  border-bottom: 2px solid var(--week-border-1);
-}
-
-.week-column:nth-child(4n + 2) {
-  background: var(--week-bg-2);
-}
-.week-column:nth-child(4n + 2) h3 {
-  border-bottom: 2px solid var(--week-border-2);
-}
-
-.week-column:nth-child(4n + 3) {
-  background: var(--week-bg-3);
-}
-.week-column:nth-child(4n + 3) h3 {
-  border-bottom: 2px solid var(--week-border-3);
-}
-
-.week-column:nth-child(4n + 4) {
-  background: var(--week-bg-4);
-}
-.week-column:nth-child(4n + 4) h3 {
-  border-bottom: 2px solid var(--week-border-4);
-}
-
-
-/* --- TASK ITEM --- */
-.roadmap-task {
-  display: flex;
+  justify-content: center;
   align-items: center;
-  gap: 10px;
-  background: var(--task-bg);
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid var(--task-border);
-  transition: background-color 0.2s;
-  cursor: pointer;
-}
-.roadmap-task:hover {
-  background: var(--task-hover-bg);
-}
-.roadmap-task.done {
-  text-decoration: line-through;
-  color: var(--text-muted-color);
+  gap: 8px;
 }
 
-/* --- CUSTOM CHECKBOX --- */
-.roadmap-checkbox {
-  appearance: none;
-  -webkit-appearance: none;
+.generate-btn {
+  color: #ffffff;
+  background: linear-gradient(90deg, #58a6ff, #3182ce);
+}
+
+.generate-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(88, 166, 255, 0.3);
+}
+
+.suggest-btn {
+  color: #e0e0e0;
+  background-color: #21262d;
+}
+
+.suggest-btn:hover:not(:disabled) {
+  background-color: #30363d;
+}
+
+.roadmap-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Roadmap Display Area */
+.roadmap-display {
+  margin-top: 20px;
+  width: 100%;
+}
+
+.roadmap-day {
+  background-color: #1c2128;
+  padding: 20px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  border-left: 4px solid #58a6ff;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+  animation: slideIn 0.4s ease-out forwards;
+}
+
+@keyframes slideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.day-title {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #ffffff;
+  margin-bottom: 5px;
+}
+
+.day-task {
+  color: #a0a0a0;
+  margin-bottom: 15px;
+}
+
+.day-task strong {
+  color: #c9d1d9;
+}
+
+.quiz-btn {
+  background-color: #238636;
+  color: white;
+  padding: 8px 15px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  width: auto;
+}
+
+.quiz-btn:hover {
+  background-color: #2ea043;
+}
+
+.error-message {
+  color: #ff7b72;
+  text-align: center;
+  font-weight: 500;
+  padding: 10px;
+  background-color: rgba(255, 123, 114, 0.1);
+  border-radius: 8px;
+}
+
+/* Loading Spinner */
+.loader {
   width: 18px;
   height: 18px;
-  border: 2px solid var(--text-muted-color);
-  border-radius: 4px;
-  cursor: pointer;
+  border: 2px solid #FFF;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Quiz Modal Styling */
+.modal {
+  display: block;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.7);
+}
+
+.modal-content {
+  background-color: #161b22;
+  margin: 10% auto;
+  padding: 30px;
+  border: 1px solid #30363d;
+  width: 90%;
+  max-width: 600px;
+  border-radius: 12px;
   position: relative;
-  flex-shrink: 0; /* Prevents checkbox from shrinking */
 }
 
-.roadmap-checkbox:checked {
-  background-color: var(--button-bg);
-  border-color: var(--button-bg);
-}
-
-.roadmap-checkbox:checked::before {
-  content: '✔';
-  font-size: 14px;
-  color: white;
+.close-btn {
+  color: #aaa;
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  top: 15px;
+  right: 20px;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+  color: white;
+}
+
+.quiz-question {
+  margin-bottom: 20px;
+}
+
+.quiz-question p {
+  text-align: left;
+  margin-bottom: 10px;
+}
+
+.quiz-options label {
+  display: block;
+  background-color: #0d1117;
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid #30363d;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.quiz-options label:hover {
+  background-color: #30363d;
+}
+
+/* Styles for correct/incorrect answers */
+.quiz-options label.correct {
+  background-color: rgba(35, 134, 54, 0.3);
+  border-color: #238636;
+  color: #3fb950;
+}
+
+.quiz-options label.incorrect {
+  background-color: rgba(218, 54, 51, 0.3);
+  border-color: #da3633;
+}
+
+.submit-quiz-btn {
+  width: auto;
+  padding: 10px 20px;
+  margin-top: 20px;
+  background-color: #238636;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.submit-quiz-btn:hover {
+  background-color: #2ea043;
+}
+
+.quiz-results {
+  text-align: center;
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-top: 20px;
+  color: #58a6ff;
 }
