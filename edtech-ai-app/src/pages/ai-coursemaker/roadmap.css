@@ -1,142 +1,368 @@
 /* General Styling */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #0d1117;
+  color: #e0e0e0;
+  margin: 0;
+  overflow-x: hidden;
+}
+
 .roadmap-container {
   font-family: 'Inter', sans-serif;
   background-color: #0d1117;
   color: #e0e0e0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
   min-height: 100vh;
-  margin: 0;
+  width: 100%;
+}
+
+/* --- STAGE 1: SETUP CONTAINER --- */
+.setup-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
   padding: 40px 20px;
   box-sizing: border-box;
+}
+
+.container {
   width: 100%;
   max-width: 800px;
-  margin: 0 auto;
   background-color: #161b22;
+  padding: 30px 40px;
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   border: 1px solid #30363d;
 }
 
-/* Header */
-.roadmap-title {
-  font-size: 2.5rem;
-  color: #ffffff;
-  text-align: center;
-  margin-bottom: 10px;
+.container h1 { 
+  font-size: 2.5rem; 
+  color: #ffffff; 
+  text-align: center; 
+  margin-bottom: 10px; 
 }
 
-.roadmap-subtitle {
-  text-align: center;
-  color: #8b949e;
-  margin-bottom: 30px;
-  font-size: 1.1rem;
+.container p { 
+  text-align: center; 
+  color: #8b949e; 
+  margin-bottom: 30px; 
+  font-size: 1.1rem; 
 }
 
 /* Input Fields & Buttons */
-.input-group {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin-bottom: 10px;
-  width: 100%;
+.input-group { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 15px; 
+  margin-bottom: 20px; 
 }
 
-@media (min-width: 600px) {
-  .input-group {
-    flex-direction: row;
-  }
+@media (min-width: 600px) { 
+  .input-group { 
+    flex-direction: row; 
+  } 
 }
 
-.button-group {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 30px;
-  width: 100%;
-}
-
-@media (min-width: 600px) {
-  .button-group {
-    flex-direction: row;
-  }
-}
-
-.roadmap-input {
-  width: 100%;
-  padding: 15px;
-  font-size: 1rem;
+input[type="text"], input[type="number"] {
+  width: 100%; 
+  padding: 15px; 
+  font-size: 1rem; 
   background-color: #0d1117;
-  border: 1px solid #30363d;
-  border-radius: 8px;
-  color: #e0e0e0;
+  border: 1px solid #30363d; 
+  border-radius: 8px; 
+  color: #e0e0e0; 
   outline: none;
-  transition: border-color 0.3s, box-shadow 0.3s;
+  transition: border-color 0.3s, box-shadow 0.3s; 
   box-sizing: border-box;
 }
 
-.roadmap-input:focus {
-  border-color: #58a6ff;
-  box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2);
+input[type="text"]:focus, input[type="number"]:focus { 
+  border-color: #58a6ff; 
+  box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2); 
 }
 
-.roadmap-input::placeholder {
-  color: #8b949e;
-}
-
-.roadmap-button {
-  width: 100%;
-  padding: 15px;
-  font-size: 1.1rem;
-  font-weight: 700;
+button {
+  width: 100%; 
+  padding: 15px; 
+  font-size: 1.1rem; 
+  font-weight: 700; 
   border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  border-radius: 8px; 
+  cursor: pointer; 
+  transition: transform 0.2s, background-color 0.3s;
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
   gap: 8px;
 }
 
-.generate-btn {
-  color: #ffffff;
-  background: linear-gradient(90deg, #58a6ff, #3182ce);
-}
-
-.generate-btn:hover:not(:disabled) {
+button:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(88, 166, 255, 0.3);
 }
 
-.suggest-btn {
-  color: #e0e0e0;
-  background-color: #21262d;
-}
-
-.suggest-btn:hover:not(:disabled) {
-  background-color: #30363d;
-}
-
-.roadmap-button:disabled {
+button:disabled {
   cursor: not-allowed;
   opacity: 0.6;
 }
 
-/* Roadmap Display Area */
+/* Course Selection */
+.course-selection-container { 
+  display: grid; 
+  grid-template-columns: 1fr; 
+  gap: 20px; 
+}
+
+@media (min-width: 768px) { 
+  .course-selection-container { 
+    grid-template-columns: 1fr 1fr; 
+  } 
+}
+
+.course-card {
+  background-color: #1c2128; 
+  border: 1px solid #30363d; 
+  border-radius: 10px; 
+  padding: 20px;
+  display: flex; 
+  flex-direction: column; 
+  transition: transform 0.3s;
+}
+
+.course-card:hover { 
+  transform: translateY(-5px); 
+}
+
+.course-card h3 { 
+  font-size: 1.2rem; 
+  margin: 0 0 5px 0; 
+  color: #c9d1d9; 
+}
+
+.course-card .source { 
+  font-size: 0.9rem; 
+  font-weight: 500; 
+  padding: 4px 8px; 
+  border-radius: 6px; 
+  margin-right: 8px; 
+  display: inline-block; 
+}
+
+.source.youtube { 
+  background-color: #ff0000; 
+  color: white; 
+}
+
+.source.coursera { 
+  background-color: #0056d2; 
+  color: white; 
+}
+
+.source.udemy { 
+  background-color: #a435f0; 
+  color: white; 
+}
+
+.course-card .author { 
+  font-size: 0.9rem; 
+  color: #8b949e; 
+  margin-top: 10px; 
+}
+
+.course-card .rating { 
+  margin-top: 15px; 
+  color: #ffc107; 
+}
+
+.course-card .select-course-btn { 
+  margin-top: auto; 
+  padding: 10px; 
+  font-size: 1rem; 
+  background-color: #238636; 
+  color: white; 
+}
+
+.error-message { 
+  color: #ff7b72; 
+  text-align: center; 
+  font-weight: 500; 
+  padding: 10px; 
+  background-color: rgba(255, 123, 114, 0.1); 
+  border-radius: 8px; 
+}
+
+/* --- STAGE 2: LEARNING INTERFACE --- */
+.learning-interface {
+  display: grid;
+  grid-template-columns: 240px 1fr 350px;
+  height: 100vh;
+  width: 100%;
+}
+
+/* Left Sidebar (App Navigation) */
+.left-sidebar {
+  background-color: #161b22;
+  border-right: 1px solid #30363d;
+  padding: 20px;
+}
+
+.left-sidebar h2 { 
+  font-size: 1.5rem; 
+  color: #58a6ff; 
+  margin-bottom: 30px; 
+}
+
+.left-sidebar ul { 
+  list-style: none; 
+  padding: 0; 
+  margin: 0; 
+}
+
+.left-sidebar ul li { 
+  margin-bottom: 15px; 
+  font-size: 1rem; 
+  color: #8b949e; 
+  cursor: pointer; 
+}
+
+.left-sidebar ul li.active { 
+  color: #c9d1d9; 
+  font-weight: 700; 
+}
+
+.left-sidebar ul li ul { 
+  padding-left: 20px; 
+  margin-top: 10px; 
+}
+
+/* Main Content (Video) */
+.main-content {
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  background-color: #0d1117;
+}
+
+.main-content h1 { 
+  font-size: 2rem; 
+  margin-bottom: 20px; 
+  text-align: left; 
+}
+
+.video-container {
+  width: 100%;
+  background-color: #000;
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #8b949e;
+  overflow: hidden;
+}
+
+.video-container svg { 
+  width: 80px; 
+  height: 80px; 
+}
+
+.video-container iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Right Sidebar (Roadmap/Resources) */
+.right-sidebar {
+  background-color: #161b22;
+  border-left: 1px solid #30363d;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: hidden;
+}
+
+.tab-buttons { 
+  display: flex; 
+  border-bottom: 1px solid #30363d; 
+  margin-bottom: 20px; 
+}
+
+.tab-btn {
+  flex: 1; 
+  padding: 10px; 
+  text-align: center; 
+  background: none; 
+  color: #8b949e;
+  border: none; 
+  border-bottom: 3px solid transparent; 
+  cursor: pointer; 
+  font-size: 1rem;
+}
+
+.tab-btn.active { 
+  color: #c9d1d9; 
+  border-bottom-color: #58a6ff; 
+}
+
+.tab-content { 
+  flex-grow: 1; 
+  overflow-y: auto; 
+}
+
+.tab-panel { 
+  display: none; 
+}
+
+.tab-panel.active { 
+  display: block; 
+}
+
+/* Resource List Styling */
+.resource-list { 
+  list-style: none; 
+  padding: 0; 
+  margin: 0; 
+}
+
+.resource-list li {
+  padding: 12px; 
+  border-radius: 6px; 
+  margin-bottom: 8px;
+  cursor: pointer; 
+  transition: background-color 0.2s;
+}
+
+.resource-list li:hover { 
+  background-color: #21262d; 
+}
+
+.resource-list li.active { 
+  background-color: #58a6ff; 
+  color: #161b22; 
+  font-weight: 700; 
+}
+
+.exit-btn {
+  width: 100%; 
+  margin-top: 20px; 
+  color: #ff7b72; 
+  background-color: rgba(255, 123, 114, 0.1);
+}
+
+/* Roadmap Styling (in sidebar) */
+/* Roadmap Styling (in sidebar) */
 .roadmap-display {
   margin-top: 20px;
   width: 100%;
 }
 
 .roadmap-day {
-  background-color: #1c2128;
-  padding: 20px;
-  margin-bottom: 15px;
-  border-radius: 8px;
-  border-left: 4px solid #58a6ff;
+  background-color: #0d1117; 
+  padding: 15px; 
+  margin-bottom: 12px;
+  border-radius: 8px; 
+  border-left: 3px solid #58a6ff;
   opacity: 0;
   transform: translateY(10px);
   transition: opacity 0.4s ease-out, transform 0.4s ease-out;
@@ -152,18 +378,33 @@
 
 .day-title {
   font-weight: 700;
-  font-size: 1.2rem;
+  font-size: 1rem;
   color: #ffffff;
   margin-bottom: 5px;
 }
 
 .day-task {
-  color: #a0a0a0;
-  margin-bottom: 15px;
+  font-size: 0.9rem; 
+  color: #a0a0a0; 
+  margin-bottom: 10px;
 }
 
 .day-task strong {
   color: #c9d1d9;
+}
+
+.day-buttons { 
+  display: flex; 
+  flex-wrap: wrap; 
+  gap: 8px; 
+}
+
+.day-buttons button {
+  padding: 6px 12px; 
+  font-size: 0.8rem; 
+  font-weight: 500;
+  border-radius: 6px; 
+  width: auto;
 }
 
 .quiz-btn {
@@ -183,13 +424,9 @@
   background-color: #2ea043;
 }
 
-.error-message {
-  color: #ff7b72;
-  text-align: center;
-  font-weight: 500;
-  padding: 10px;
-  background-color: rgba(255, 123, 114, 0.1);
-  border-radius: 8px;
+.project-btn { 
+  background-color: #8957e5; 
+  color: white; 
 }
 
 /* Loading Spinner */
@@ -306,4 +543,62 @@
   font-weight: 700;
   margin-top: 20px;
   color: #58a6ff;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .learning-interface {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+  }
+  
+  .left-sidebar {
+    border-right: none;
+    border-bottom: 1px solid #30363d;
+    padding: 15px;
+  }
+  
+  .left-sidebar h2 {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+  }
+  
+  .left-sidebar ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .left-sidebar ul li {
+    margin-bottom: 0;
+    font-size: 0.9rem;
+  }
+  
+  .right-sidebar {
+    border-left: none;
+    border-top: 1px solid #30363d;
+    max-height: 40vh;
+  }
+  
+  .main-content {
+    padding: 20px;
+  }
+  
+  .main-content h1 {
+    font-size: 1.5rem;
+  }
+  
+  .container {
+    padding: 20px;
+  }
+  
+  .container h1 {
+    font-size: 2rem;
+  }
+  
+  .exit-btn {
+    margin-top: 10px;
+    padding: 8px;
+    font-size: 0.9rem;
+  }
 }

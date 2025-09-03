@@ -2,10 +2,23 @@ import React, { useState } from "react";
 import "./roadmap.css"; // ✅ Import updated CSS
 
 export default function RoadmapGenerator() {
+  // Stage management
+  const [currentStage, setCurrentStage] = useState("setup"); // "setup" or "learning"
+  
+  // Setup stage states
   const [course, setCourse] = useState("");
   const [duration, setDuration] = useState("");
-  const [roadmap, setRoadmap] = useState([]);
+  const [foundCourses, setFoundCourses] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  
+  // Learning stage states
+  const [currentCourse, setCurrentCourse] = useState(null);
+  const [roadmap, setRoadmap] = useState([]);
+  const [activeTab, setActiveTab] = useState("resource");
+  const [activeModule, setActiveModule] = useState(0);
+  
+  // Quiz states
   const [showQuiz, setShowQuiz] = useState(false);
   const [quizData, setQuizData] = useState([]);
   const [quizTitle, setQuizTitle] = useState("");
@@ -14,23 +27,45 @@ export default function RoadmapGenerator() {
   // IMPORTANT: Make sure you have VITE_GEMINI_API_KEY in your .env.local file
   const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
-  // Mock database of curated courses
-  const curatedCourses = {
-    'python': {
-      name: "CS50's Introduction to Programming with Python",
-      type: "YouTube Playlist",
-      modules: ["Functions, Variables", "Conditionals", "Loops", "Exceptions", "Libraries", "Unit Tests", "File I/O", "Regular Expressions", "Object-Oriented Programming"]
-    },
-    'javascript': {
-      name: "Full JavaScript Course for Beginners by freeCodeCamp",
-      type: "YouTube Video",
-      modules: ["Introduction to JavaScript", "Variables and Data Types", "Arrays and Objects", "Operators", "Conditional Statements", "Loops (For, While)", "Functions", "Scope", "DOM Manipulation", "Events", "JSON", "Async JS (Promises, async/await)"]
-    },
-    'ux design': {
-      name: "Google UX Design Professional Certificate",
-      type: "Coursera Course",
-      modules: ["Foundations of UX Design", "Start the UX Design Process: Empathize, Define, and Ideate", "Build Wireframes and Low-Fidelity Prototypes", "Conduct UX Research and Test Early Concepts", "Create High-Fidelity Designs and Prototypes in Figma", "Responsive Web Design in Adobe XD", "Design a User Experience for Social Good & Prepare for Jobs"]
-    }
+  // Enhanced database of curated courses with video IDs
+  const curatedCoursesDB = {
+    'python': [
+      { 
+        title: "CS50's Intro to Python", 
+        source: "YouTube", 
+        author: "freeCodeCamp.org", 
+        rating: 5, 
+        modules: ["Intro", "Functions, Variables", "Conditionals", "Loops", "Exceptions", "Libraries", "Unit Tests", "File I/O", "Regular Expressions", "OOP"],
+        videoIds: ["nLRL_NcnK-4", "t5sDFvOgAbM", "5_sV_p-a_yU", "_w5n2s-3nSg", "s_Kt6i21y-8", "1x6a53-D4-I", "xv24X45so2k", "1Scm19ITt_A", "r-Alj55tW4g", "tHYi3S0OW_U"] 
+      },
+      { 
+        title: "Python for Everybody", 
+        source: "Coursera", 
+        author: "University of Michigan", 
+        rating: 5, 
+        modules: ["Getting Started", "Data Structures", "Accessing Web Data", "Databases with Python", "Capstone"] 
+        // No videoIds, will show placeholder
+      }
+    ],
+    'javascript': [
+      { 
+        title: "JS Tutorial for Beginners", 
+        source: "YouTube", 
+        author: "Mosh Hamedani", 
+        rating: 5, 
+        modules: ["Intro", "Basics", "Control Flow", "Objects", "Arrays", "Functions", "ES6"],
+        videoIds: ["W6NZfCO5SIk", "hdI2bqOjy3c", "IsG4Xd6LlsM", "7PGPCjcgNCE", "vEROU2XtPR8", "N8ap4k_1QEQ", "NCwa_xi0Uuc"]
+      }
+    ],
+    'sql': [
+      { 
+        title: "SQL for Data Science", 
+        source: "Coursera", 
+        author: "UC Davis", 
+        rating: 5, 
+        modules: ["Intro to SQL", "Data Wrangling", "SQL for Data Analysis", "Advanced SQL", "BI Tools"] 
+      }
+    ]
   };
 
   // Gemini API call function
@@ -58,52 +93,47 @@ export default function RoadmapGenerator() {
     }
   };
 
-  const generateRoadmap = async () => {
+  const findCourses = () => {
     const subject = course.toLowerCase().trim();
     const durationDays = parseInt(duration);
     
     if (!subject || !durationDays || durationDays <= 0) {
-      alert("Please enter a valid subject and a duration greater than 0.");
+      setError("Please enter a valid subject and a duration greater than 0.");
       return;
     }
 
-    setLoading(true);
-    setRoadmap([]);
-
-    try {
-      const curatedCourse = curatedCourses[subject];
-      if (curatedCourse) {
-        // Use curated course
-        generateRoadmapFromCourse(curatedCourse, durationDays);
-      } else {
-        // Generate with AI
-        const prompt = `You are an expert curriculum designer. Create a beginner-friendly, 10-module learning roadmap for the topic "${subject}". Provide the output as a clean JSON array of strings, where each string is a module title. Do not include any text before or after the JSON array. Example for "Python": ["Introduction to Python", "Variables and Data Types", "Control Flow", ...].`;
-        
-        const responseText = await callGeminiAPI(prompt);
-
-        if (responseText) {
-          try {
-            const cleanJson = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
-            const modules = JSON.parse(cleanJson);
-            const aiCourse = {
-              name: `AI-Generated Plan for ${subject.charAt(0).toUpperCase() + subject.slice(1)}`,
-              modules: modules
-            };
-            generateRoadmapFromCourse(aiCourse, durationDays);
-          } catch (e) {
-            console.error("Failed to parse AI-generated roadmap:", e);
-            alert("The AI couldn't create a roadmap for this topic. Please try another one.");
-          }
-        } else {
-          alert("There was an error generating the AI roadmap. Please check your connection and try again.");
-        }
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Error generating roadmap. Check the console for details.");
-    } finally {
-      setLoading(false);
+    setError("");
+    setFoundCourses([]);
+    
+    const courses = curatedCoursesDB[subject];
+    if (!courses) {
+      setError(`No curated courses for "${subject}" yet. Try: ${Object.keys(curatedCoursesDB).join(", ")}`);
+      return;
     }
+    
+    setFoundCourses(courses);
+  };
+
+  const selectCourse = (courseIndex) => {
+    const subject = course.toLowerCase().trim();
+    const durationDays = parseInt(duration);
+    const selectedCourse = curatedCoursesDB[subject][courseIndex];
+    
+    setCurrentCourse(selectedCourse);
+    setActiveModule(0);
+    generateRoadmapFromCourse(selectedCourse, durationDays);
+    setCurrentStage("learning");
+  };
+
+  const exitCourse = () => {
+    setCurrentStage("setup");
+    setCurrentCourse(null);
+    setFoundCourses([]);
+    setCourse("");
+    setDuration("");
+    setError("");
+    setRoadmap([]);
+    setActiveModule(0);
   };
 
   const generateRoadmapFromCourse = (courseData, durationDays) => {
@@ -111,7 +141,7 @@ export default function RoadmapGenerator() {
     const numModules = modules.length;
     
     if (durationDays < numModules) {
-      alert(`This course has ${numModules} modules. Please provide a duration of at least ${numModules} days.`);
+      setError(`This course has ${numModules} modules. Please provide a duration of at least ${numModules} days.`);
       return;
     }
 
@@ -126,7 +156,7 @@ export default function RoadmapGenerator() {
       roadmapDays.push({
         day: dayCounter,
         title: `Day ${dayCounter}: Study`,
-        task: `Watch/Read Module: ${moduleTitle}`,
+        task: `Learn: <strong>${moduleTitle}</strong>`,
         module: null,
         type: 'study'
       });
@@ -136,8 +166,8 @@ export default function RoadmapGenerator() {
       if (dayCounter <= durationDays) {
         roadmapDays.push({
           day: dayCounter,
-          title: `Day ${dayCounter}: Review & Practice`,
-          task: `Review notes and take a practice quiz on "${moduleTitle}".`,
+          title: `Day ${dayCounter}: Review`,
+          task: `Review "${moduleTitle}".`,
           module: moduleTitle,
           type: 'review'
         });
@@ -150,10 +180,11 @@ export default function RoadmapGenerator() {
     while (dayCounter <= durationDays) {
       roadmapDays.push({
         day: dayCounter,
-        title: `Day ${dayCounter}: Project Work / Catch-up`,
-        task: `Work on a personal project applying what you've learned or review past topics.`,
+        title: `Day ${dayCounter}: Project Work`,
+        task: `Apply your skills.`,
         module: null,
-        type: 'project'
+        type: 'project',
+        subject: course
       });
       dayCounter++;
     }
@@ -161,13 +192,194 @@ export default function RoadmapGenerator() {
     setRoadmap(roadmapDays);
   };
 
-  const suggestTopic = async () => {
-    setLoading(true);
-    const prompt = "You are a helpful academic advisor. Suggest one popular and specific topic for a beginner to self-study. For example: Python, JavaScript, UX Design. Return only the name of the topic.";
-    const topic = await callGeminiAPI(prompt);
-    setCourse(topic ? topic.trim() : "");
-    setLoading(false);
+  const selectModule = (moduleIndex) => {
+    setActiveModule(moduleIndex);
   };
+
+  const suggestProject = async (subject) => {
+    const prompt = `Suggest a beginner-friendly project for someone learning ${subject}. Provide just the project name and a brief description in 1-2 sentences.`;
+    const projectIdea = await callGeminiAPI(prompt);
+    alert(projectIdea || "Try building a simple calculator or todo list!");
+  };
+
+  const renderVideoPlayer = () => {
+    if (!currentCourse) return null;
+    
+    const hasVideoIds = currentCourse.videoIds && currentCourse.videoIds[activeModule];
+    
+    if (hasVideoIds) {
+      return (
+        <iframe 
+          src={`https://www.youtube.com/embed/${currentCourse.videoIds[activeModule]}`}
+          title="YouTube video player" 
+          frameBorder="0" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+          allowFullScreen
+          style={{ width: '100%', height: '100%', border: 'none' }}
+        />
+      );
+    } else {
+      return (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', color: '#8b949e' }}>
+          <svg viewBox="0 0 24 24" fill="currentColor" style={{ width: '80px', height: '80px' }}>
+            <path d="M8 5v14l11-7z"></path>
+          </svg>
+        </div>
+      );
+    }
+  };
+
+  // Setup Stage Component
+  const SetupStage = () => (
+    <div className="setup-wrapper">
+      <div className="container">
+        <h1>AI Roadmap Generator 🚀</h1>
+        <p>Enter a topic and duration to find the perfect course for you.</p>
+        
+        <div className="input-group">
+          <input
+            type="text"
+            placeholder="e.g., Python, JavaScript, SQL"
+            value={course}
+            onChange={(e) => setCourse(e.target.value)}
+          />
+          <input
+            type="number"
+            placeholder="Duration in days, e.g., 30"
+            value={duration}
+            onChange={(e) => setDuration(e.target.value)}
+          />
+        </div>
+        
+        <button onClick={findCourses} disabled={loading}>
+          {loading ? (
+            <>
+              <span className="loader"></span> Finding Courses...
+            </>
+          ) : (
+            'Find Courses'
+          )}
+        </button>
+        
+        {error && <div className="error-message">{error}</div>}
+        
+        <div className="course-selection-container">
+          {foundCourses.map((course, index) => (
+            <div key={index} className="course-card">
+              <h3>{course.title}</h3>
+              <div className="meta">
+                <span className={`source ${course.source.toLowerCase()}`}>{course.source}</span>
+                <span className="author">{course.author}</span>
+              </div>
+              <div className="rating">{'★'.repeat(course.rating)}</div>
+              <button 
+                className="select-course-btn" 
+                onClick={() => selectCourse(index)}
+              >
+                Select this Course
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  // Learning Interface Component
+  const LearningInterface = () => (
+    <div className="learning-interface">
+      <aside className="left-sidebar">
+        <h2>Preppal</h2>
+        <ul>
+          <li>Dashboard</li>
+          <li className="active">Roadmap Maker</li>
+          <li style={{ display: currentCourse ? 'block' : 'none' }}>
+            <ul>
+              <li className="active">{currentCourse?.title}</li>
+            </ul>
+          </li>
+          <li>AI Summarizer</li>
+          <li>Smart Notes</li>
+        </ul>
+        <button className="exit-btn" onClick={exitCourse}>
+          ← Exit Course
+        </button>
+      </aside>
+      
+      <main className="main-content">
+        <h1>
+          {currentCourse ? `Module ${activeModule + 1}: ${currentCourse.modules[activeModule]}` : 'Welcome to your course!'}
+        </h1>
+        <div className="video-container">
+          {renderVideoPlayer()}
+        </div>
+      </main>
+      
+      <aside className="right-sidebar">
+        <div className="tab-buttons">
+          <button 
+            className={`tab-btn ${activeTab === 'resource' ? 'active' : ''}`}
+            onClick={() => setActiveTab('resource')}
+          >
+            Resource
+          </button>
+          <button 
+            className={`tab-btn ${activeTab === 'roadmap' ? 'active' : ''}`}
+            onClick={() => setActiveTab('roadmap')}
+          >
+            Roadmap
+          </button>
+        </div>
+        
+        <div className="tab-content">
+          {activeTab === 'resource' && (
+            <div className="tab-panel active">
+              <ul className="resource-list">
+                {currentCourse?.modules.map((module, index) => (
+                  <li 
+                    key={index}
+                    className={activeModule === index ? 'active' : ''}
+                    onClick={() => selectModule(index)}
+                  >
+                    Module {index + 1}: {module}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          
+          {activeTab === 'roadmap' && (
+            <div className="tab-panel active">
+              {roadmap.map((day, index) => (
+                <div key={index} className="roadmap-day">
+                  <div className="day-title">{day.title}</div>
+                  <div className="day-task" dangerouslySetInnerHTML={{ __html: day.task }}></div>
+                  <div className="day-buttons">
+                    {day.type === 'review' && day.module && (
+                      <button 
+                        className="quiz-btn" 
+                        onClick={() => generateQuiz(day.module)}
+                      >
+                        ✨ Generate Quiz
+                      </button>
+                    )}
+                    {day.type === 'project' && (
+                      <button 
+                        className="project-btn" 
+                        onClick={() => suggestProject(day.subject || course)}
+                      >
+                        💡 Suggest a Project
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </aside>
+    </div>
+  );
 
   const generateQuiz = async (moduleTitle) => {
     setQuizTitle(`AI Quiz: ${moduleTitle}`);
@@ -210,64 +422,8 @@ export default function RoadmapGenerator() {
 
   return (
     <div className="roadmap-container">
-      <h1 className="roadmap-title">AI Roadmap Generator 🚀</h1>
-      <p className="roadmap-subtitle">Enter a topic and duration to create your personalized learning plan.</p>
+      {currentStage === "setup" ? <SetupStage /> : <LearningInterface />}
       
-      <div className="input-group">
-        <input
-          type="text"
-          placeholder="Try: Python, SQL, or any topic!"
-          value={course}
-          onChange={(e) => setCourse(e.target.value)}
-          className="roadmap-input"
-        />
-        <input
-          type="number"
-          placeholder="Duration in days, e.g., 30"
-          value={duration}
-          onChange={(e) => setDuration(e.target.value)}
-          className="roadmap-input"
-        />
-      </div>
-      
-      <div className="button-group">
-        <button onClick={generateRoadmap} disabled={loading} className="roadmap-button generate-btn">
-          {loading ? (
-            <>
-              <span className="loader"></span> Generating AI Roadmap...
-            </>
-          ) : (
-            'Generate My Roadmap'
-          )}
-        </button>
-        <button onClick={suggestTopic} disabled={loading} className="roadmap-button suggest-btn">
-          {loading ? (
-            <>
-              <span className="loader"></span> Thinking...
-            </>
-          ) : (
-            '✨ Suggest a Topic'
-          )}
-        </button>
-      </div>
-
-      <div className="roadmap-display">
-        {roadmap.map((day, index) => (
-          <div key={index} className="roadmap-day">
-            <div className="day-title">{day.title}</div>
-            <div className="day-task" dangerouslySetInnerHTML={{ __html: day.task }}></div>
-            {day.module && (
-              <button 
-                className="quiz-btn" 
-                onClick={() => generateQuiz(day.module)}
-              >
-                ✨ Generate Quiz
-              </button>
-            )}
-          </div>
-        ))}
-      </div>
-
       {/* Quiz Modal */}
       {showQuiz && (
         <div className="modal">
