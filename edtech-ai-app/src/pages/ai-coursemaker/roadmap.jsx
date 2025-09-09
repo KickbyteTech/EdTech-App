@@ -288,23 +288,6 @@ export default function RoadmapGenerator() {
   // Learning Interface Component
   const LearningInterface = () => (
     <div className="learning-interface">
-      <aside className="left-sidebar">
-        <h2>Preppal</h2>
-        <ul>
-          <li>Dashboard</li>
-          <li className="active">Roadmap Maker</li>
-          <li style={{ display: currentCourse ? 'block' : 'none' }}>
-            <ul>
-              <li className="active">{currentCourse?.title}</li>
-            </ul>
-          </li>
-          <li>AI Summarizer</li>
-          <li>Smart Notes</li>
-        </ul>
-        <button className="exit-btn" onClick={exitCourse}>
-          ← Exit Course
-        </button>
-      </aside>
       
       <main className="main-content">
         <h1>

@@ -193,45 +193,9 @@ button:disabled {
 /* --- STAGE 2: LEARNING INTERFACE --- */
 .learning-interface {
   display: grid;
-  grid-template-columns: 240px 1fr 350px;
+  grid-template-columns: 1fr 300px;
   height: 100vh;
   width: 100%;
-}
-
-/* Left Sidebar (App Navigation) */
-.left-sidebar {
-  background-color: #161b22;
-  border-right: 1px solid #30363d;
-  padding: 20px;
-}
-
-.left-sidebar h2 { 
-  font-size: 1.5rem; 
-  color: #58a6ff; 
-  margin-bottom: 30px; 
-}
-
-.left-sidebar ul { 
-  list-style: none; 
-  padding: 0; 
-  margin: 0; 
-}
-
-.left-sidebar ul li { 
-  margin-bottom: 15px; 
-  font-size: 1rem; 
-  color: #8b949e; 
-  cursor: pointer; 
-}
-
-.left-sidebar ul li.active { 
-  color: #c9d1d9; 
-  font-weight: 700; 
-}
-
-.left-sidebar ul li ul { 
-  padding-left: 20px; 
-  margin-top: 10px; 
 }
 
 /* Main Content (Video) */
