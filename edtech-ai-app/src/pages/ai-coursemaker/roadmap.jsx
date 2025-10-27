@@ -1,6 +1,233 @@
 import React, { useState } from "react";
 import "./roadmap.css"; // ✅ Import updated CSS
 
+//
+// ==========================================
+//  SETUP STAGE COMPONENT (MOVED OUTSIDE)
+// ==========================================
+//
+const SetupStage = ({
+  course,
+  setCourse,
+  duration,
+  setDuration,
+  loading,
+  error,
+  foundCourses,
+  findCourses,
+  selectCourse
+}) => {
+  
+  const handleCourseChange = (e) => {
+    setCourse(e.target.value);
+  };
+  
+  const handleDurationChange = (e) => {
+    setDuration(e.target.value);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    findCourses();
+  };
+
+  return (
+    <div className="setup-wrapper">
+      <div className="container">
+        <h1>AI Roadmap Generator 🚀</h1>
+        <p>Enter a topic and duration to find the perfect course for you.</p>
+        
+        <form onSubmit={handleSubmit}>
+          <div className="input-group">
+            <input
+              type="text"
+              name="course" 
+              id="course"   
+              placeholder="e.g., Python, JavaScript, SQL"
+              value={course}
+              onChange={handleCourseChange}
+              autoComplete="off"
+              spellCheck="false"
+            />
+            <input
+              type="number"
+              name="duration" 
+              id="duration"   
+              placeholder="Duration in days, e.g., 30"
+              value={duration}
+              onChange={handleDurationChange}
+              min="1"
+              autoComplete="off"
+            />
+          </div>
+          
+          <button type="submit" disabled={loading}>
+            {loading ? (
+              <>
+                <span className="loader"></span> Finding Courses...
+              </>
+            ) : (
+              'Find Courses'
+            )}
+          </button>
+        </form> 
+        
+        {error && <div className="error-message">{error}</div>}
+        
+        <div className="course-selection-container">
+          {foundCourses.map((course, index) => (
+            <div key={index} className="course-card">
+              <h3>{course.title}</h3>
+              <div className="meta">
+                <span className={`source ${course.source.toLowerCase()}`}>
+                  {course.source}
+                </span>
+                <span className="author">{course.author}</span>
+              </div>
+              <div className="rating">{'★'.repeat(course.rating)}</div>
+              <button 
+                className="select-course-btn" 
+                onClick={() => selectCourse(index)}
+              >
+                Select this Course
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+//
+// ==========================================
+//  LEARNING INTERFACE COMPONENT (MOVED OUTSIDE)
+// ==========================================
+//
+const LearningInterface = ({
+  course,
+  currentCourse,
+  activeModule,
+  activeTab,
+  setActiveTab,
+  roadmap,
+  selectModule,
+  generateQuiz,
+  suggestProject
+}) => {
+
+  // This function is now inside LearningInterface
+  const renderVideoPlayer = () => {
+    if (!currentCourse) return null;
+    
+    const hasVideoIds = currentCourse.videoIds && currentCourse.videoIds[activeModule];
+    
+    if (hasVideoIds) {
+      return (
+        <iframe 
+          src={`https://www.youtube.com/embed/${currentCourse.videoIds[activeModule]}`}
+          title="YouTube video player" 
+          frameBorder="0" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+          allowFullScreen
+          style={{ width: '100%', height: '100%', border: 'none' }}
+        />
+      );
+    } else {
+      return (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', color: '#8b949e' }}>
+          <svg viewBox="0 0 24 24" fill="currentColor" style={{ width: '80px', height: '80px' }}>
+            <path d="M8 5v14l11-7z"></path>
+          </svg>
+        </div>
+      );
+    }
+  };
+
+  return (
+    <div className="learning-interface">
+      <main className="main-content">
+        <h1>
+          {currentCourse ? `Module ${activeModule + 1}: ${currentCourse.modules[activeModule]}` : 'Welcome to your course!'}
+        </h1>
+        <div className="video-container">
+          {renderVideoPlayer()}
+        </div>
+      </main>
+      
+      <aside className="right-sidebar">
+        <div className="tab-buttons">
+          <button 
+            className={`tab-btn ${activeTab === 'resource' ? 'active' : ''}`}
+            onClick={() => setActiveTab('resource')}
+          >
+            Resource
+          </button>
+          <button 
+            className={`tab-btn ${activeTab === 'roadmap' ? 'active' : ''}`}
+            onClick={() => setActiveTab('roadmap')}
+          >
+            Roadmap
+          </button>
+        </div>
+        
+        <div className="tab-content">
+          {activeTab === 'resource' && (
+            <div className="tab-panel active">
+              <ul className="resource-list">
+                {currentCourse?.modules.map((module, index) => (
+                  <li 
+                    key={index}
+                    className={activeModule === index ? 'active' : ''}
+                    onClick={() => selectModule(index)}
+                  >
+                    Module {index + 1}: {module}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          
+          {activeTab === 'roadmap' && (
+            <div className="tab-panel active">
+              {roadmap.map((day, index) => (
+                <div key={index} className="roadmap-day">
+                  <div className="day-title">{day.title}</div>
+                  <div className="day-task" dangerouslySetInnerHTML={{ __html: day.task }}></div>
+                  <div className="day-buttons">
+                    {day.type === 'review' && day.module && (
+                      <button 
+                        className="quiz-btn" 
+                        onClick={() => generateQuiz(day.module)}
+                      >
+                        ✨ Generate Quiz
+                      </button>
+                    )}
+                    {day.type === 'project' && (
+                      <button 
+                        className="project-btn" 
+                        onClick={() => suggestProject(day.subject || course)}
+                      >
+                        💡 Suggest a Project
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </aside>
+    </div>
+  );
+};
+
+
+//
+// ==========================================
+//  MAIN ROADMAP GENERATOR (PARENT COMPONENT)
+// ==========================================
+//
 export default function RoadmapGenerator() {
   // Stage management
   const [currentStage, setCurrentStage] = useState("setup"); // "setup" or "learning"
@@ -202,167 +429,7 @@ export default function RoadmapGenerator() {
     alert(projectIdea || "Try building a simple calculator or todo list!");
   };
 
-  const renderVideoPlayer = () => {
-    if (!currentCourse) return null;
-    
-    const hasVideoIds = currentCourse.videoIds && currentCourse.videoIds[activeModule];
-    
-    if (hasVideoIds) {
-      return (
-        <iframe 
-          src={`https://www.youtube.com/embed/${currentCourse.videoIds[activeModule]}`}
-          title="YouTube video player" 
-          frameBorder="0" 
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-          allowFullScreen
-          style={{ width: '100%', height: '100%', border: 'none' }}
-        />
-      );
-    } else {
-      return (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', color: '#8b949e' }}>
-          <svg viewBox="0 0 24 24" fill="currentColor" style={{ width: '80px', height: '80px' }}>
-            <path d="M8 5v14l11-7z"></path>
-          </svg>
-        </div>
-      );
-    }
-  };
-
-  // Setup Stage Component
-  const SetupStage = () => (
-    <div className="setup-wrapper">
-      <div className="container">
-        <h1>AI Roadmap Generator 🚀</h1>
-        <p>Enter a topic and duration to find the perfect course for you.</p>
-        
-        <div className="input-group">
-          <input
-            type="text"
-            placeholder="e.g., Python, JavaScript, SQL"
-            value={course}
-            onChange={(e) => setCourse(e.target.value)}
-          />
-          <input
-            type="number"
-            placeholder="Duration in days, e.g., 30"
-            value={duration}
-            onChange={(e) => setDuration(e.target.value)}
-          />
-        </div>
-        
-        <button onClick={findCourses} disabled={loading}>
-          {loading ? (
-            <>
-              <span className="loader"></span> Finding Courses...
-            </>
-          ) : (
-            'Find Courses'
-          )}
-        </button>
-        
-        {error && <div className="error-message">{error}</div>}
-        
-        <div className="course-selection-container">
-          {foundCourses.map((course, index) => (
-            <div key={index} className="course-card">
-              <h3>{course.title}</h3>
-              <div className="meta">
-                <span className={`source ${course.source.toLowerCase()}`}>{course.source}</span>
-                <span className="author">{course.author}</span>
-              </div>
-              <div className="rating">{'★'.repeat(course.rating)}</div>
-              <button 
-                className="select-course-btn" 
-                onClick={() => selectCourse(index)}
-              >
-                Select this Course
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-
-  // Learning Interface Component
-  const LearningInterface = () => (
-    <div className="learning-interface">
-      
-      <main className="main-content">
-        <h1>
-          {currentCourse ? `Module ${activeModule + 1}: ${currentCourse.modules[activeModule]}` : 'Welcome to your course!'}
-        </h1>
-        <div className="video-container">
-          {renderVideoPlayer()}
-        </div>
-      </main>
-      
-      <aside className="right-sidebar">
-        <div className="tab-buttons">
-          <button 
-            className={`tab-btn ${activeTab === 'resource' ? 'active' : ''}`}
-            onClick={() => setActiveTab('resource')}
-          >
-            Resource
-          </button>
-          <button 
-            className={`tab-btn ${activeTab === 'roadmap' ? 'active' : ''}`}
-            onClick={() => setActiveTab('roadmap')}
-          >
-            Roadmap
-          </button>
-        </div>
-        
-        <div className="tab-content">
-          {activeTab === 'resource' && (
-            <div className="tab-panel active">
-              <ul className="resource-list">
-                {currentCourse?.modules.map((module, index) => (
-                  <li 
-                    key={index}
-                    className={activeModule === index ? 'active' : ''}
-                    onClick={() => selectModule(index)}
-                  >
-                    Module {index + 1}: {module}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-          
-          {activeTab === 'roadmap' && (
-            <div className="tab-panel active">
-              {roadmap.map((day, index) => (
-                <div key={index} className="roadmap-day">
-                  <div className="day-title">{day.title}</div>
-                  <div className="day-task" dangerouslySetInnerHTML={{ __html: day.task }}></div>
-                  <div className="day-buttons">
-                    {day.type === 'review' && day.module && (
-                      <button 
-                        className="quiz-btn" 
-                        onClick={() => generateQuiz(day.module)}
-                      >
-                        ✨ Generate Quiz
-                      </button>
-                    )}
-                    {day.type === 'project' && (
-                      <button 
-                        className="project-btn" 
-                        onClick={() => suggestProject(day.subject || course)}
-                      >
-                        💡 Suggest a Project
-                      </button>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </aside>
-    </div>
-  );
+  // renderVideoPlayer was here, but has been moved into LearningInterface
 
   const generateQuiz = async (moduleTitle) => {
     setQuizTitle(`AI Quiz: ${moduleTitle}`);
@@ -405,7 +472,34 @@ export default function RoadmapGenerator() {
 
   return (
     <div className="roadmap-container">
-      {currentStage === "setup" ? <SetupStage /> : <LearningInterface />}
+      {/* This is the main change. We now render the components
+        and pass them all the state and functions they need as props.
+      */}
+      {currentStage === "setup" ? (
+        <SetupStage 
+          course={course}
+          setCourse={setCourse}
+          duration={duration}
+          setDuration={setDuration}
+          loading={loading}
+          error={error}
+          foundCourses={foundCourses}
+          findCourses={findCourses}
+          selectCourse={selectCourse}
+        />
+      ) : (
+        <LearningInterface 
+          course={course}
+          currentCourse={currentCourse}
+          activeModule={activeModule}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          roadmap={roadmap}
+          selectModule={selectModule}
+          generateQuiz={generateQuiz}
+          suggestProject={suggestProject}
+        />
+      )}
       
       {/* Quiz Modal */}
       {showQuiz && (
