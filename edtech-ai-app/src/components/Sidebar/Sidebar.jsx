@@ -8,10 +8,7 @@ const Sidebar = () => {
     { label: '🎯 AI Roadmap Maker', path: '/roadmap' },
     { label: '🃏 Flashcards', path: '/flashcards' },
     { label: '⏰ Focus Timer', path: '/timer' },
-    { label: '🤖 AI Summarizer', path: '/summarizer' },
     { label: '📝 Smart Notes', path: '/notes' },
-    { label: '📈 Progress', path: '/progress' },
-    { label: '👥 Study Groups', path: '/groups' },
     { label: '⚙️ Settings', path: '/settings' },
   ];
 

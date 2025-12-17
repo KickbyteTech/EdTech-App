@@ -254,92 +254,92 @@ export default function RoadmapGenerator() {
   // IMPORTANT: Make sure you have VITE_GEMINI_API_KEY in your .env.local file
   const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
-  // Enhanced database of curated courses with video IDs
-  const curatedCoursesDB = {
-    'python': [
-      { 
-        title: "CS50's Intro to Python", 
-        source: "YouTube", 
-        author: "freeCodeCamp.org", 
-        rating: 5, 
-        modules: ["Intro", "Functions, Variables", "Conditionals", "Loops", "Exceptions", "Libraries", "Unit Tests", "File I/O", "Regular Expressions", "OOP"],
-        videoIds: ["nLRL_NcnK-4", "t5sDFvOgAbM", "5_sV_p-a_yU", "_w5n2s-3nSg", "s_Kt6i21y-8", "1x6a53-D4-I", "xv24X45so2k", "1Scm19ITt_A", "r-Alj55tW4g", "tHYi3S0OW_U"] 
-      },
-      { 
-        title: "Python for Everybody", 
-        source: "Coursera", 
-        author: "University of Michigan", 
-        rating: 5, 
-        modules: ["Getting Started", "Data Structures", "Accessing Web Data", "Databases with Python", "Capstone"] 
-        // No videoIds, will show placeholder
-      }
-    ],
-    'javascript': [
-      { 
-        title: "JS Tutorial for Beginners", 
-        source: "YouTube", 
-        author: "Mosh Hamedani", 
-        rating: 5, 
-        modules: ["Intro", "Basics", "Control Flow", "Objects", "Arrays", "Functions", "ES6"],
-        videoIds: ["W6NZfCO5SIk", "hdI2bqOjy3c", "IsG4Xd6LlsM", "7PGPCjcgNCE", "vEROU2XtPR8", "N8ap4k_1QEQ", "NCwa_xi0Uuc"]
-      }
-    ],
-    'sql': [
-      { 
-        title: "SQL for Data Science", 
-        source: "Coursera", 
-        author: "UC Davis", 
-        rating: 5, 
-        modules: ["Intro to SQL", "Data Wrangling", "SQL for Data Analysis", "Advanced SQL", "BI Tools"] 
-      }
-    ]
-  };
+  // // Enhanced database of curated courses with video IDs
+  // const curatedCoursesDB = {
+  //   'python': [
+  //     { 
+  //       title: "CS50's Intro to Python", 
+  //       source: "YouTube", 
+  //       author: "freeCodeCamp.org", 
+  //       rating: 5, 
+  //       modules: ["Intro", "Functions, Variables", "Conditionals", "Loops", "Exceptions", "Libraries", "Unit Tests", "File I/O", "Regular Expressions", "OOP"],
+  //       videoIds: ["nLRL_NcnK-4", "t5sDFvOgAbM", "5_sV_p-a_yU", "_w5n2s-3nSg", "s_Kt6i21y-8", "1x6a53-D4-I", "xv24X45so2k", "1Scm19ITt_A", "r-Alj55tW4g", "tHYi3S0OW_U"] 
+  //     },
+  //     { 
+  //       title: "Python for Everybody", 
+  //       source: "Coursera", 
+  //       author: "University of Michigan", 
+  //       rating: 5, 
+  //       modules: ["Getting Started", "Data Structures", "Accessing Web Data", "Databases with Python", "Capstone"] 
+  //       // No videoIds, will show placeholder
+  //     }
+  //   ],
+  //   'javascript': [
+  //     { 
+  //       title: "JS Tutorial for Beginners", 
+  //       source: "YouTube", 
+  //       author: "Mosh Hamedani", 
+  //       rating: 5, 
+  //       modules: ["Intro", "Basics", "Control Flow", "Objects", "Arrays", "Functions", "ES6"],
+  //       videoIds: ["W6NZfCO5SIk", "hdI2bqOjy3c", "IsG4Xd6LlsM", "7PGPCjcgNCE", "vEROU2XtPR8", "N8ap4k_1QEQ", "NCwa_xi0Uuc"]
+  //     }
+  //   ],
+  //   'sql': [
+  //     { 
+  //       title: "SQL for Data Science", 
+  //       source: "Coursera", 
+  //       author: "UC Davis", 
+  //       rating: 5, 
+  //       modules: ["Intro to SQL", "Data Wrangling", "SQL for Data Analysis", "Advanced SQL", "BI Tools"] 
+  //     }
+  //   ]
+  // };
 
-  // Gemini API call function
-  const callGeminiAPI = async (prompt) => {
-    try {
-      const payload = {
-        contents: [{ parts: [{ text: prompt }] }],
-      };
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${API_KEY}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        }
-      );
-      if (!response.ok) {
-        throw new Error(`API Error: ${response.statusText}`);
-      }
-      const result = await response.json();
-      return result.candidates[0].content.parts[0].text;
-    } catch (error) {
-      console.error("Gemini API call failed:", error);
-      return null;
-    }
-  };
+  // // Gemini API call function
+  // const callGeminiAPI = async (prompt) => {
+  //   try {
+  //     const payload = {
+  //       contents: [{ parts: [{ text: prompt }] }],
+  //     };
+  //     const response = await fetch(
+  //       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${API_KEY}`,
+  //       {
+  //         method: 'POST',
+  //         headers: { 'Content-Type': 'application/json' },
+  //         body: JSON.stringify(payload)
+  //       }
+  //     );
+  //     if (!response.ok) {
+  //       throw new Error(`API Error: ${response.statusText}`);
+  //     }
+  //     const result = await response.json();
+  //     return result.candidates[0].content.parts[0].text;
+  //   } catch (error) {
+  //     console.error("Gemini API call failed:", error);
+  //     return null;
+  //   }
+  // };
 
-  const findCourses = () => {
-    const subject = course.toLowerCase().trim();
-    const durationDays = parseInt(duration);
+  // const findCourses = () => {
+  //   const subject = course.toLowerCase().trim();
+  //   const durationDays = parseInt(duration);
     
-    if (!subject || !durationDays || durationDays <= 0) {
-      setError("Please enter a valid subject and a duration greater than 0.");
-      return;
-    }
+  //   if (!subject || !durationDays || durationDays <= 0) {
+  //     setError("Please enter a valid subject and a duration greater than 0.");
+  //     return;
+  //   }
 
-    setError("");
-    setFoundCourses([]);
+  //   setError("");
+  //   setFoundCourses([]);
     
-    const courses = curatedCoursesDB[subject];
-    if (!courses) {
-      setError(`No curated courses for "${subject}" yet. Try: ${Object.keys(curatedCoursesDB).join(", ")}`);
-      return;
-    }
+  //   const courses = curatedCoursesDB[subject];
+  //   if (!courses) {
+  //     setError(`No curated courses for "${subject}" yet. Try: ${Object.keys(curatedCoursesDB).join(", ")}`);
+  //     return;
+  //   }
     
-    setFoundCourses(courses);
-  };
+  //   setFoundCourses(courses);
+  // };
 
   const selectCourse = (courseIndex) => {
     const subject = course.toLowerCase().trim();

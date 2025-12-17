@@ -40,12 +40,6 @@ const Dashboard = () => {
               <p>Use the Pomodoro timer to stay focused and productive during your study sessions.</p>
               <button className="card-action">Start Session</button>
           </div>
-          <div className="feature-card" onClick={navigateTo('summarizer')}>
-              <div className="card-icon">🤖</div>
-              <h3>AI Summarizer</h3>
-              <p>Turn lengthy textbooks and articles into concise, digestible summaries in seconds.</p>
-              <button className="card-action">Summarize Now</button>
-          </div>
           <div className="feature-card" onClick={navigateTo('flashcards')}>
               <div className="card-icon">🃏</div>
               <h3>Smart Flashcards</h3>

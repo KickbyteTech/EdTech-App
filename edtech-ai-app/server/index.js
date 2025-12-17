@@ -1,47 +1,36 @@
+// server/index.js
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const Course = require('./models/Course'); // Import the model we just created
 
 const app = express();
 
 // Middleware
-app.use(express.json()); // Allows server to accept JSON data
-app.use(cors()); // Allows your React frontend to talk to this backend
+app.use(express.json());
+app.use(cors()); // CRITICAL: Allows React (localhost:5173) to talk to this Server (localhost:5000)
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.error("Could not connect to MongoDB", err));
-
-// --- DEFINE DATABASE SCHEMA ---
-const courseSchema = new mongoose.Schema({
-  title: String,
-  modules: Array,
-  duration: Number,
-  createdAt: { type: Date, default: Date.now }
-});
-
-const Course = mongoose.model('Course', courseSchema);
+  .then(() => console.log("✅ Server connected to MongoDB"))
+  .catch(err => console.error("❌ MongoDB connection error:", err));
 
 // --- API ROUTES ---
 
-// 1. Save a new course (Frontend calls this)
-app.post('/api/courses', async (req, res) => {
+// GET: Find courses by subject (e.g., /api/courses/python)
+app.get('/api/courses/:subject', async (req, res) => {
   try {
-    const newCourse = new Course(req.body);
-    const savedCourse = await newCourse.save();
-    res.json(savedCourse);
+    const subject = req.params.subject.toLowerCase();
+    const courses = await Course.find({ slug: subject });
+    
+    // If we find courses, send them back. If not, send empty array.
+    res.json(courses); 
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: "Server error fetching courses" });
   }
 });
 
-// 2. Get all saved courses
-app.get('/api/courses', async (req, res) => {
-  const courses = await Course.find();
-  res.json(courses);
-});
-
+// Start the Server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
