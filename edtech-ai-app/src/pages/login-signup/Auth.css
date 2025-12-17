@@ -1,0 +1,77 @@
+/* =========================================
+   AUTH PAGES (LOGIN / SIGNUP) STYLES
+   ========================================= */
+
+.auth-container {
+  max-width: 400px;
+  margin: 100px auto; /* Centers it vertically and horizontally */
+  padding: 40px;
+  background-color: #1e293b; /* Matches your slate-800 dark theme */
+  color: white;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  border: 1px solid #334155;
+}
+
+.auth-container h2 {
+  margin-bottom: 25px;
+  font-size: 2rem;
+  color: #fff;
+}
+
+.auth-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.auth-container input {
+  width: 100%;
+  padding: 12px 15px;
+  border-radius: 8px;
+  border: 1px solid #475569;
+  background-color: #0f172a; /* Darker input background */
+  color: white;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.auth-container input:focus {
+  border-color: #3b82f6; /* Blue focus ring */
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.auth-container button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  background-color: #22c55e; /* Green button matches your UI */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.auth-container button:hover {
+  background-color: #16a34a;
+}
+
+.auth-container button:active {
+  transform: scale(0.98);
+}
+
+.auth-container p {
+  margin-top: 20px;
+  font-size: 0.9rem;
+  color: #94a3b8;
+}
+
+.auth-container p:hover {
+  color: #3b82f6; /* Blue hover for the link */
+  text-decoration: underline;
+}

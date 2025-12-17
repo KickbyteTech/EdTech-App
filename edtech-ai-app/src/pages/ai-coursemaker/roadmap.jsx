@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import "./roadmap.css"; // ✅ Import updated CSS
+import "./roadmap.css";
 
 //
 // ==========================================
-//  SETUP STAGE COMPONENT (MOVED OUTSIDE)
+//  SETUP STAGE COMPONENT
 // ==========================================
 //
 const SetupStage = ({
@@ -14,7 +14,7 @@ const SetupStage = ({
   loading,
   error,
   foundCourses,
-  findCourses,
+  findCourses, // <--- This receives the function from the parent
   selectCourse
 }) => {
   
@@ -28,7 +28,7 @@ const SetupStage = ({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    findCourses();
+    findCourses(); // <--- This calls the function in the parent
   };
 
   return (
@@ -79,12 +79,12 @@ const SetupStage = ({
             <div key={index} className="course-card">
               <h3>{course.title}</h3>
               <div className="meta">
-                <span className={`source ${course.source.toLowerCase()}`}>
+                <span className={`source ${course.source ? course.source.toLowerCase() : 'web'}`}>
                   {course.source}
                 </span>
                 <span className="author">{course.author}</span>
               </div>
-              <div className="rating">{'★'.repeat(course.rating)}</div>
+              <div className="rating">{'★'.repeat(course.rating || 5)}</div>
               <button 
                 className="select-course-btn" 
                 onClick={() => selectCourse(index)}
@@ -101,7 +101,7 @@ const SetupStage = ({
 
 //
 // ==========================================
-//  LEARNING INTERFACE COMPONENT (MOVED OUTSIDE)
+//  LEARNING INTERFACE COMPONENT
 // ==========================================
 //
 const LearningInterface = ({
@@ -116,7 +116,6 @@ const LearningInterface = ({
   suggestProject
 }) => {
 
-  // This function is now inside LearningInterface
   const renderVideoPlayer = () => {
     if (!currentCourse) return null;
     
@@ -229,17 +228,19 @@ const LearningInterface = ({
 // ==========================================
 //
 export default function RoadmapGenerator() {
-  // Stage management
-  const [currentStage, setCurrentStage] = useState("setup"); // "setup" or "learning"
-  
-  // Setup stage states
+  // Auth & User State
+  const [authStage, setAuthStage] = useState("login"); // 'login', 'signup', 'loggedin'
+  const [userId, setUserId] = useState(localStorage.getItem("preppal_user_id") || "");
+
+  // App State
+  const [currentStage, setCurrentStage] = useState("setup");
   const [course, setCourse] = useState("");
   const [duration, setDuration] = useState("");
   const [foundCourses, setFoundCourses] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   
-  // Learning stage states
+  // Learning states
   const [currentCourse, setCurrentCourse] = useState(null);
   const [roadmap, setRoadmap] = useState([]);
   const [activeTab, setActiveTab] = useState("resource");
@@ -251,125 +252,147 @@ export default function RoadmapGenerator() {
   const [quizTitle, setQuizTitle] = useState("");
   const [quizResults, setQuizResults] = useState(null);
 
-  // IMPORTANT: Make sure you have VITE_GEMINI_API_KEY in your .env.local file
   const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
-  // // Enhanced database of curated courses with video IDs
-  // const curatedCoursesDB = {
-  //   'python': [
-  //     { 
-  //       title: "CS50's Intro to Python", 
-  //       source: "YouTube", 
-  //       author: "freeCodeCamp.org", 
-  //       rating: 5, 
-  //       modules: ["Intro", "Functions, Variables", "Conditionals", "Loops", "Exceptions", "Libraries", "Unit Tests", "File I/O", "Regular Expressions", "OOP"],
-  //       videoIds: ["nLRL_NcnK-4", "t5sDFvOgAbM", "5_sV_p-a_yU", "_w5n2s-3nSg", "s_Kt6i21y-8", "1x6a53-D4-I", "xv24X45so2k", "1Scm19ITt_A", "r-Alj55tW4g", "tHYi3S0OW_U"] 
-  //     },
-  //     { 
-  //       title: "Python for Everybody", 
-  //       source: "Coursera", 
-  //       author: "University of Michigan", 
-  //       rating: 5, 
-  //       modules: ["Getting Started", "Data Structures", "Accessing Web Data", "Databases with Python", "Capstone"] 
-  //       // No videoIds, will show placeholder
-  //     }
-  //   ],
-  //   'javascript': [
-  //     { 
-  //       title: "JS Tutorial for Beginners", 
-  //       source: "YouTube", 
-  //       author: "Mosh Hamedani", 
-  //       rating: 5, 
-  //       modules: ["Intro", "Basics", "Control Flow", "Objects", "Arrays", "Functions", "ES6"],
-  //       videoIds: ["W6NZfCO5SIk", "hdI2bqOjy3c", "IsG4Xd6LlsM", "7PGPCjcgNCE", "vEROU2XtPR8", "N8ap4k_1QEQ", "NCwa_xi0Uuc"]
-  //     }
-  //   ],
-  //   'sql': [
-  //     { 
-  //       title: "SQL for Data Science", 
-  //       source: "Coursera", 
-  //       author: "UC Davis", 
-  //       rating: 5, 
-  //       modules: ["Intro to SQL", "Data Wrangling", "SQL for Data Analysis", "Advanced SQL", "BI Tools"] 
-  //     }
-  //   ]
-  // };
-
-  // // Gemini API call function
-  // const callGeminiAPI = async (prompt) => {
-  //   try {
-  //     const payload = {
-  //       contents: [{ parts: [{ text: prompt }] }],
-  //     };
-  //     const response = await fetch(
-  //       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${API_KEY}`,
-  //       {
-  //         method: 'POST',
-  //         headers: { 'Content-Type': 'application/json' },
-  //         body: JSON.stringify(payload)
-  //       }
-  //     );
-  //     if (!response.ok) {
-  //       throw new Error(`API Error: ${response.statusText}`);
-  //     }
-  //     const result = await response.json();
-  //     return result.candidates[0].content.parts[0].text;
-  //   } catch (error) {
-  //     console.error("Gemini API call failed:", error);
-  //     return null;
-  //   }
-  // };
-
-  // const findCourses = () => {
-  //   const subject = course.toLowerCase().trim();
-  //   const durationDays = parseInt(duration);
+  // --- AUTH CHECK ON LOAD ---
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const savedId = localStorage.getItem('preppal_user_id');
     
-  //   if (!subject || !durationDays || durationDays <= 0) {
-  //     setError("Please enter a valid subject and a duration greater than 0.");
-  //     return;
-  //   }
+    if (token && savedId) {
+      setUserId(savedId);
+      setAuthStage("loggedin");
+      // Load user progress if they have any!
+      fetchUserProgress(savedId);
+    }
+  }, []);
 
-  //   setError("");
-  //   setFoundCourses([]);
-    
-  //   const courses = curatedCoursesDB[subject];
-  //   if (!courses) {
-  //     setError(`No curated courses for "${subject}" yet. Try: ${Object.keys(curatedCoursesDB).join(", ")}`);
-  //     return;
-  //   }
-    
-  //   setFoundCourses(courses);
-  // };
+  // --- API FUNCTIONS ---
 
-  const selectCourse = (courseIndex) => {
+  const callGeminiAPI = async (prompt) => {
+    try {
+      const payload = {
+        contents: [{ parts: [{ text: prompt }] }],
+      };
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${API_KEY}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        }
+      );
+      if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
+      const result = await response.json();
+      return result.candidates[0].content.parts[0].text;
+    } catch (error) {
+      console.error("Gemini API call failed:", error);
+      return null;
+    }
+  };
+
+  // 1. FETCH COURSES FROM BACKEND
+  const findCourses = async () => {
     const subject = course.toLowerCase().trim();
     const durationDays = parseInt(duration);
-    const selectedCourse = curatedCoursesDB[subject][courseIndex];
+    
+    if (!subject || !durationDays || durationDays <= 0) {
+      setError("Please enter a valid subject and a duration greater than 0.");
+      return;
+    }
+
+    setError("");
+    setLoading(true);
+    setFoundCourses([]);
+
+    try {
+      // Connects to your Node.js server
+      const response = await fetch(`http://localhost:5000/api/courses/${subject}`);
+      
+      if (!response.ok) {
+        throw new Error("Failed to connect to the server.");
+      }
+
+      const data = await response.json();
+
+      if (data && data.length > 0) {
+        setFoundCourses(data);
+      } else {
+        setError(`No curated courses found for "${subject}". Try: Python, JavaScript, or SQL.`);
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Error connecting to the database. Make sure the server is running.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 2. FETCH SAVED USER PROGRESS
+  const fetchUserProgress = async (id) => {
+    try {
+      const res = await fetch(`http://localhost:5000/api/progress/${id}`);
+      const data = await res.json();
+      
+      if (data && data.activeCourseSlug) {
+        // Fetch course details to restore the UI
+        const courseRes = await fetch(`http://localhost:5000/api/courses/${data.activeCourseSlug}`);
+        const courseData = await courseRes.json();
+        
+        if (courseData.length > 0) {
+           setCurrentCourse(courseData[0]);
+           setRoadmap(data.roadmap || []);
+           setActiveModule(data.currentModule || 0);
+           setCourse(data.activeCourseSlug);
+           setCurrentStage("learning");
+        }
+      }
+    } catch (err) {
+      console.log("No previous progress found or server error.");
+    }
+  };
+
+  // 3. SELECT COURSE & SAVE TO DB
+  const selectCourse = async (courseIndex) => {
+    const subject = course.toLowerCase().trim();
+    const durationDays = parseInt(duration);
+    const selectedCourse = foundCourses[courseIndex];
     
     setCurrentCourse(selectedCourse);
     setActiveModule(0);
-    generateRoadmapFromCourse(selectedCourse, durationDays);
+    
+    // Generate roadmap locally and capture the returned array
+    const newRoadmap = generateRoadmapFromCourse(selectedCourse, durationDays);
+    
+    setRoadmap(newRoadmap);
     setCurrentStage("learning");
-  };
 
-  const exitCourse = () => {
-    setCurrentStage("setup");
-    setCurrentCourse(null);
-    setFoundCourses([]);
-    setCourse("");
-    setDuration("");
-    setError("");
-    setRoadmap([]);
-    setActiveModule(0);
+    // Save to Backend
+    if (userId) {
+      try {
+        await fetch('http://localhost:5000/api/progress', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: userId,
+            courseSlug: subject,
+            roadmap: newRoadmap,
+            currentModule: 0
+          })
+        });
+      } catch (err) {
+        console.error("Failed to save progress to DB", err);
+      }
+    }
   };
 
   const generateRoadmapFromCourse = (courseData, durationDays) => {
-    const modules = courseData.modules;
+    const modules = courseData.modules || [];
     const numModules = modules.length;
     
     if (durationDays < numModules) {
       setError(`This course has ${numModules} modules. Please provide a duration of at least ${numModules} days.`);
-      return;
+      return [];
     }
 
     const roadmapDays = [];
@@ -389,7 +412,7 @@ export default function RoadmapGenerator() {
       });
       dayCounter++;
 
-      // Review day with quiz option
+      // Review day
       if (dayCounter <= durationDays) {
         roadmapDays.push({
           day: dayCounter,
@@ -403,7 +426,7 @@ export default function RoadmapGenerator() {
       moduleIndex++;
     }
 
-    // Fill remaining days with project work
+    // Project days
     while (dayCounter <= durationDays) {
       roadmapDays.push({
         day: dayCounter,
@@ -416,11 +439,13 @@ export default function RoadmapGenerator() {
       dayCounter++;
     }
 
-    setRoadmap(roadmapDays);
+    // setRoadmap(roadmapDays); // Don't set state here, just return
+    return roadmapDays; 
   };
 
   const selectModule = (moduleIndex) => {
     setActiveModule(moduleIndex);
+    // Optional: Save module progress to DB here if you want
   };
 
   const suggestProject = async (subject) => {
@@ -429,22 +454,19 @@ export default function RoadmapGenerator() {
     alert(projectIdea || "Try building a simple calculator or todo list!");
   };
 
-  // renderVideoPlayer was here, but has been moved into LearningInterface
-
   const generateQuiz = async (moduleTitle) => {
     setQuizTitle(`AI Quiz: ${moduleTitle}`);
     setQuizData([]);
     setQuizResults(null);
     setShowQuiz(true);
 
-    const prompt = `Create a simple 5-question multiple-choice quiz for a beginner learning about "${moduleTitle}". For each question, provide the question text, three incorrect options, and one correct option. Format the output as a simple JSON array of objects. Each object should have keys "question", "options" (an array of 4 strings), and "answer" (the correct option string).`;
+    const prompt = `Create a simple 5-question multiple-choice quiz for a beginner learning about "${moduleTitle}". For each question, provide the question text, three incorrect options, and one correct option. Format the output as a simple JSON array of objects.`;
     
     const responseText = await callGeminiAPI(prompt);
     if (responseText) {
       try {
         const cleanJson = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
         const quiz = JSON.parse(cleanJson);
-        // Shuffle options for each question
         quiz.forEach(item => {
           item.options.sort(() => Math.random() - 0.5);
         });
@@ -470,11 +492,51 @@ export default function RoadmapGenerator() {
     setQuizResults({ score, total: quizData.length });
   };
 
+  const handleLogout = () => {
+    localStorage.clear();
+    window.location.reload();
+  };
+
+  // --- RENDER LOGIC ---
+
+  if (authStage === "login") {
+    return (
+      <Login 
+        onLogin={(id) => { 
+          setUserId(id); 
+          setAuthStage("loggedin"); 
+          fetchUserProgress(id);
+        }} 
+        switchToSignup={() => setAuthStage("signup")} 
+      />
+    );
+  }
+
+  if (authStage === "signup") {
+    return <Signup switchToLogin={() => setAuthStage("login")} />;
+  }
+
+  // Logged In View
   return (
     <div className="roadmap-container">
-      {/* This is the main change. We now render the components
-        and pass them all the state and functions they need as props.
-      */}
+      <button 
+        onClick={handleLogout} 
+        style={{
+          position: 'absolute', 
+          top: 20, 
+          right: 20, 
+          zIndex: 100,
+          background: '#dc3545',
+          color: 'white',
+          border: 'none',
+          padding: '5px 10px',
+          borderRadius: '4px',
+          cursor: 'pointer'
+        }}
+      >
+        Logout
+      </button>
+
       {currentStage === "setup" ? (
         <SetupStage 
           course={course}
@@ -484,6 +546,7 @@ export default function RoadmapGenerator() {
           loading={loading}
           error={error}
           foundCourses={foundCourses}
+          // IMPORTANT: Passing the function down
           findCourses={findCourses}
           selectCourse={selectCourse}
         />
